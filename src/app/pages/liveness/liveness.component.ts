@@ -7,7 +7,7 @@ import * as faceapi from 'face-api.js';
   imports: [CommonModule],
   template: `
     <div class="card">
-      <h2>AI Liveness Verification</h2>
+      <h2>Liveness Verification</h2>
 
       <video #video autoplay muted></video>
 
