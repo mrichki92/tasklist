@@ -1,1 +1,72 @@
-/* You can add global styles to this file, and also import other style files */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card{
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(14px);
+    padding: 40px;
+    border-radius: 16px;
+    width: 360px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    color: white;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 14px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    background: #00c6ff;
+    background: linear-gradient(to right, #00c6ff, #0072ff);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover{
+    transform: translateY(-2px);
+}
+
+.link {
+    text-align: center;
+    margin-top: 10px;
+    display: block;
+    color: #fff;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+video {
+    width: 100%;
+    border-radius: 12px;
+    margin-top: 15px;
+}
+
+.status{
+    text-align: center;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
