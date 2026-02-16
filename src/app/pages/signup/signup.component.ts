@@ -27,7 +27,10 @@ export class SignupComponent {
   form = this.fb.group({ name: '', email: '', password: '' });
 
   submit() {
+    console.log('Form Value:', this.form.value);
     this.auth.signup(this.form.value);
-    alert('Signup success!');
+    console.log('User saved to localStorage');
+    alert('Signup Success!');
   }
+
 }

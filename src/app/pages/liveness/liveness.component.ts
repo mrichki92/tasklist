@@ -75,8 +75,15 @@ export class LivenessComponent implements OnInit {
   status = 'Loading AI...';
   loading = true;
 
+  // Challenge Steps
   currentStep = 0;
   steps = ['smile', 'blink'];
+
+  // Blink Detection Advanced
+  blinkFrames = 0;
+  blinkDetected = false;
+  EAR_THRESHOLD = 0.28;
+  BLINK_MIN_FRAMES = 1;
 
   async ngOnInit() {
     await this.loadModels();
@@ -124,32 +131,64 @@ export class LivenessComponent implements OnInit {
     this.detect(step);
   }
 
+  // ===== EAR CALCULATION =====
+  getEAR(eye: any) {
+    const dist = (a: any, b: any) =>
+      Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
+
+    const A = dist(eye[1], eye[5]);
+    const B = dist(eye[2], eye[4]);
+    const C = dist(eye[0], eye[3]);
+
+    return (A + B) / (2.0 * C);
+  }
+
   detect(step: string) {
     const interval = setInterval(async () => {
 
-   
       const detection = await faceapi
-      .detectSingleFace(
-        this.videoRef.nativeElement,
-        new faceapi.TinyFaceDetectorOptions()
-      )
-      .withFaceLandmarks()      // ⬅️ LANDMARK DULU
-      .withFaceExpressions();   // ⬅️ baru expressions
-
+        .detectSingleFace(
+          this.videoRef.nativeElement,
+          new faceapi.TinyFaceDetectorOptions()
+        )
+        .withFaceLandmarks()
+        .withFaceExpressions();
 
       if (!detection) return;
 
+      // ===== SMILE DETECTION =====
       if (step === 'smile' && detection.expressions.happy > 0.7) {
         this.success(interval);
       }
 
+      // ===== ADVANCED BLINK DETECTION =====
       if (step === 'blink') {
+
         const leftEye = detection.landmarks.getLeftEye();
-        const eyeOpen = leftEye[1].y - leftEye[5].y;
-        if (eyeOpen < 2) this.success(interval);
+        const rightEye = detection.landmarks.getRightEye();
+
+        const leftEAR = this.getEAR(leftEye);
+        const rightEAR = this.getEAR(rightEye);
+
+        const ear = (leftEAR + rightEAR) / 2;
+
+        console.log('EAR:', ear);
+
+        // Mata tertutup
+        if (ear < this.EAR_THRESHOLD) {
+          this.blinkFrames++;
+        } else {
+
+          // Jika sebelumnya tertutup beberapa frame → blink valid
+          if (this.blinkFrames >= this.BLINK_MIN_FRAMES) {
+            this.success(interval);
+          }
+
+          this.blinkFrames = 0;
+        }
       }
 
-    }, 800);
+    }, 150); // Lebih smooth dari 800ms
   }
 
   success(interval: any) {
@@ -159,7 +198,7 @@ export class LivenessComponent implements OnInit {
     if (this.currentStep < this.steps.length) {
       setTimeout(() => this.nextStep(), 1200);
     } else {
-      this.status = 'Verifikasi berhasil';
+      this.status = 'Verifikasi berhasil ✅';
       this.speak('Verifikasi berhasil');
     }
   }

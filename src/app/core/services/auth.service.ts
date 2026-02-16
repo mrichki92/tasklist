@@ -4,18 +4,31 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class AuthService {
-  login(data: any) {
-    console.log('LOGIN', data);
-    localStorage.setItem('user', JSON.stringify(data));
+  
+  signup(data: any) {
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+
+    users.push(data);
+
+    localStorage.setItem('users', JSON.stringify(users));
   }
 
-  signup(data: any) {
-    console.log('SIGNUP', data);
+  login(data: any) {
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+
+    const found = users.find(
+      (u: any) => u.email === data.email && u.password === data.password
+    );
+
+    if (found) {
+      localStorage.setItem('user', JSON.stringify(found));
+      return true;
+    }
+
+    return false;
   }
 
   isLoggedIn() {
     return !!localStorage.getItem('user');
   }
-
-  constructor() { }
 }
